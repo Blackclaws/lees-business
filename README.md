@@ -2,6 +2,8 @@
 
 An incremental game about cleaning toilets. Then all of them. Then the ones in space.
 
+**Play it here: https://blackclaws.github.io/lees-business/**
+
 Open `index.html` in a browser. No build step. Saves go to the browser's localStorage.
 
 ## How it plays
