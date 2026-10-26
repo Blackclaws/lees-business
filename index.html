@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lee's Business With Your Business</title>
+<meta name="description" content="An incremental game about cleaning every toilet on Earth, and then some.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=DM+Mono:wght@400;500&family=Public+Sans:ital,wght@0,400;0,600;0,800;1,400&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="sign">
+    <p class="sign-eyebrow">Est. today · Fully insured · Gloves on</p>
+    <h1 class="wordmark">Lee's Business <span>with Your Business</span></h1>
+  </div>
+  <div class="ticker" aria-live="polite">
+    <span class="ticker-tag">News</span>
+    <p class="ticker-text" id="ticker">Local toilet "never been cleaner," says toilet.</p>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- Left: the toilet itself -->
+  <section class="stall" aria-labelledby="bank-label">
+    <div class="bank">
+      <p class="label" id="bank-label">Pennies</p>
+      <p class="bank-amount" id="pennies">0</p>
+      <p class="bank-rate"><span id="income">0</span> per second</p>
+      <ul class="buffs" id="buffs"></ul>
+    </div>
+
+    <div class="throne-wrap">
+      <button class="toilet" id="toilet" type="button" aria-describedby="toilet-hint">
+        <svg viewBox="0 0 220 240" aria-hidden="true" class="toilet-svg">
+          <ellipse cx="104" cy="226" rx="74" ry="8" class="t-shadow"/>
+          <g class="stink" id="stink">
+            <path d="M70 70 c-8 -10 8 -16 0 -28 c-8 -10 8 -16 0 -26"/>
+            <path d="M96 64 c-8 -10 8 -16 0 -28 c-8 -10 8 -16 0 -26"/>
+            <path d="M44 76 c-8 -10 8 -16 0 -28"/>
+          </g>
+          <rect x="128" y="30" width="66" height="96" rx="10" class="t-porcelain"/>
+          <rect x="122" y="22" width="78" height="14" rx="5" class="t-porcelain t-lid"/>
+          <rect x="108" y="48" width="24" height="7" rx="3.5" class="t-chrome"/>
+          <path d="M18 128 H196 V136 C196 174 160 194 128 197 L136 220 H70 L80 194 C46 186 20 164 18 140 Z" class="t-porcelain"/>
+          <rect x="12" y="118" width="172" height="14" rx="7" class="t-seat"/>
+          <g class="grime" id="grime">
+            <ellipse cx="56" cy="152" rx="11" ry="7"/>
+            <ellipse cx="96" cy="168" rx="8" ry="5"/>
+            <ellipse cx="140" cy="160" rx="13" ry="6"/>
+            <ellipse cx="44" cy="125" rx="9" ry="3.5"/>
+            <ellipse cx="120" cy="125" rx="12" ry="3.5"/>
+            <ellipse cx="108" cy="208" rx="10" ry="5"/>
+            <ellipse cx="164" cy="90" rx="9" ry="12"/>
+          </g>
+          <g class="flies" id="flies">
+            <circle class="fly fly-a" cx="0" cy="0" r="2.6"/>
+            <circle class="fly fly-b" cx="0" cy="0" r="2.2"/>
+          </g>
+          <g class="sparkle" id="sparkle">
+            <path d="M62 150 l3 -9 l3 9 l9 3 l-9 3 l-3 9 l-3 -9 l-9 -3 Z"/>
+            <path d="M150 74 l2 -6 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 Z"/>
+            <path d="M120 176 l2 -6 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 Z"/>
+          </g>
+        </svg>
+        <span class="visually-hidden">Scrub the toilet</span>
+      </button>
+      <div class="fx-layer" id="fx" aria-hidden="true"></div>
+    </div>
+
+    <p class="toilet-hint" id="toilet-hint">Click the toilet to scrub it.</p>
+
+    <div class="meter">
+      <div class="meter-head"><span class="label">Scrubbing</span><span class="mono" id="scrub-text">0 / 4</span></div>
+      <div class="bar"><div class="bar-fill bar-scrub" id="scrub-bar"></div></div>
+    </div>
+
+    <div class="meter">
+      <div class="meter-head"><span class="label">Messes waiting</span><span class="mono" id="backlog-text">1 / 10</span></div>
+      <div class="bar"><div class="bar-fill bar-grime" id="backlog-bar"></div></div>
+    </div>
+
+    <div class="flow" id="flow">
+      <div class="flow-row"><span>Messes made</span><span class="mono" id="mess-rate">0/s</span></div>
+      <div class="flow-row"><span>Cleaning capacity</span><span class="mono" id="clean-rate">0/s</span></div>
+      <div class="flow-row"><span>Pennies per mess</span><span class="mono" id="value">1</span></div>
+      <div class="flow-row" id="steve-row" hidden><span>Steve's toilets (Garys only)</span><span class="mono" id="steve-flow">0/s</span></div>
+      <div class="flow-row" id="royalty-row" hidden><span>Gary's fee from Earth</span><span class="mono" id="royalty">0/s</span></div>
+      <p class="verdict" id="verdict" data-state="solo">It is just you and the brush.</p>
+    </div>
+
+    <div class="territory">
+      <div class="meter-head"><span class="label" id="territory-label">Toilets on Earth under contract</span></div>
+      <p class="territory-count"><span class="mono" id="territory-count">1</span></p>
+      <ol class="pips" id="pips" aria-label="Milestones"></ol>
+      <p class="territory-next" id="territory-next"></p>
+      <div class="bar"><div class="bar-fill bar-earth" id="territory-bar"></div></div>
+      <p class="territory-reward" id="territory-reward"></p>
+      <p class="territory-steve" id="territory-steve" hidden></p>
+    </div>
+    </div>
+
+    <div class="door" id="door" hidden>
+      <div class="meter-head">
+        <label class="label" for="door-dial">Door price</label>
+        <span class="mono" id="door-pct">Free</span>
+      </div>
+      <input type="range" id="door-dial" min="0" max="200" step="5" value="0">
+      <p class="door-note" id="door-note"></p>
+      <p class="door-hint" id="door-hint" data-state="ok"></p>
+    </div>
+  </section>
+
+  <!-- Middle: the shop -->
+  <section class="shop" aria-label="Shop">
+    <div class="shop-head">
+      <div class="tabs" role="tablist" aria-label="Shop sections">
+        <button class="tab" role="tab" id="tab-staff" aria-controls="panel-staff" aria-selected="true" type="button">Staff</button>
+        <button class="tab" role="tab" id="tab-contracts" aria-controls="panel-contracts" aria-selected="false" type="button">Contracts</button>
+        <button class="tab" role="tab" id="tab-upgrades" aria-controls="panel-upgrades" aria-selected="false" type="button">Upgrades <span class="badge" id="upgrade-badge" hidden>0</span></button>
+        <button class="tab tab-gary" role="tab" id="tab-garys" aria-controls="panel-garys" aria-selected="false" type="button" hidden>Gary Dimensions</button>
+        <button class="tab tab-steve" role="tab" id="tab-steves" aria-controls="panel-steves" aria-selected="false" type="button" hidden>Uncle Steve</button>
+      </div>
+      <div class="bulk" role="group" aria-label="Buy amount">
+        <button type="button" class="bulk-btn" data-bulk="1" aria-pressed="true">×1</button>
+        <button type="button" class="bulk-btn" data-bulk="10" aria-pressed="false">×10</button>
+        <button type="button" class="bulk-btn" data-bulk="100" aria-pressed="false">×100</button>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="panel-staff" aria-labelledby="tab-staff">
+      <p class="panel-intro">People and machines who scrub so you don't have to. Each one adds cleaning capacity.</p>
+      <ul class="rows" id="staff-list"></ul>
+    </div>
+    <div class="panel" role="tabpanel" id="panel-contracts" aria-labelledby="tab-contracts" hidden>
+      <p class="panel-intro" id="contracts-intro">More toilets under contract means more messes, and more messes means more money.</p>
+      <ul class="rows" id="contract-list"></ul>
+    </div>
+    <div class="panel panel-gary" role="tabpanel" id="panel-garys" aria-labelledby="tab-garys" hidden>
+      <p class="panel-intro">Each cupboard makes more of the cupboard below it. The Supply Cupboard makes Garys. Every 10 you buy of one doubles its output.</p>
+      <p class="gary-summary" id="gary-summary"></p>
+      <ul class="rows" id="gary-list"></ul>
+    </div>
+    <div class="panel panel-steve" role="tabpanel" id="panel-steves" aria-labelledby="tab-steves" hidden>
+      <p class="panel-intro">Uncle Steve makes messes, in a toilet he brings himself. Only Garys may clean it, and they do it first. Each of Steve's toilets is room for one more Gary to work, but it isn't on any map, so it doesn't count toward Earth.</p>
+      <p class="gary-summary steve-summary" id="steve-summary"></p>
+      <ul class="rows" id="steve-list"></ul>
+    </div>
+    <div class="panel" role="tabpanel" id="panel-upgrades" aria-labelledby="tab-upgrades" hidden>
+      <p class="panel-intro">One-off purchases. Some make you better at cleaning. Some make the world worse at not needing you.</p>
+      <ul class="upgrades" id="upgrade-list"></ul>
+      <p class="empty" id="upgrade-empty">Nothing to buy yet. Keep scrubbing. Opportunity is a toilet that hasn't been cleaned.</p>
+      <details class="owned">
+        <summary>Already bought <span id="owned-count">0</span></summary>
+        <ul class="owned-list" id="owned-list"></ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- Right: Lee's memos and the admin -->
+  <aside class="office" aria-label="Lee's office">
+    <h2 class="office-title">Memos from Lee</h2>
+    <ol class="memos" id="memos" aria-live="polite"></ol>
+
+    <h2 class="office-title">The ledger</h2>
+    <dl class="ledger">
+      <div><dt>Toilets cleaned</dt><dd class="mono" id="st-cleaned">0</dd></div>
+      <div><dt>By your own hand</dt><dd class="mono" id="st-manual">0</dd></div>
+      <div><dt>Clicks</dt><dd class="mono" id="st-clicks">0</dd></div>
+      <div><dt>Pennies earned</dt><dd class="mono" id="st-total">0</dd></div>
+      <div><dt>Golden Plungers</dt><dd class="mono" id="st-plungers">0</dd></div>
+      <div><dt>Time on the job</dt><dd class="mono" id="st-time">0m</dd></div>
+    </dl>
+
+    <h2 class="office-title">Filing cabinet</h2>
+    <div class="admin">
+      <button type="button" class="btn" id="btn-save">Save</button>
+      <button type="button" class="btn" id="btn-export">Export</button>
+      <button type="button" class="btn" id="btn-import">Import</button>
+      <button type="button" class="btn btn-danger" id="btn-reset">Wipe save</button>
+    </div>
+    <p class="admin-note" id="save-note">Saves itself every 15 seconds.</p>
+    <div class="admin-panel" id="io-panel" hidden>
+      <label class="label" for="io-text" id="io-label">Your save</label>
+      <textarea id="io-text" rows="4" spellcheck="false"></textarea>
+      <div class="admin">
+        <button type="button" class="btn" id="io-action">Copy</button>
+        <button type="button" class="btn" id="io-close">Close</button>
+      </div>
+      <p class="admin-note" id="io-msg"></p>
+    </div>
+    <div class="admin-panel" id="reset-panel" hidden>
+      <p>Wipe everything? Every toilet, every Gary, gone. This cannot be undone.</p>
+      <div class="admin">
+        <button type="button" class="btn btn-danger" id="reset-yes">Wipe it</button>
+        <button type="button" class="btn" id="reset-no">Keep my toilets</button>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<button class="golden" id="golden" type="button" hidden aria-label="Golden Throne. Click it.">
+  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M38 6 h18 v26 h-18z M8 34 h50 v4 c0 12 -10 18 -20 19 l2 7 h-20 l3 -8 c-9 -3 -15 -10 -15 -18z"/></svg>
+</button>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <h2 id="modal-title">The Last Toilet Is Clean</h2>
+    <div id="modal-body"></div>
+    <div class="admin" id="modal-actions"></div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
